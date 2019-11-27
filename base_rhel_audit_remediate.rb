@@ -8,9 +8,13 @@ name 'base_rhel_audit_remediate'
 
 # Where to find external cookbooks:
 default_source :supermarket, "https://supermarket.chef.io" do |s|
-    s.preferred_for "chef-client","cron","logrotate"
+    s.preferred_for "chef-client","cron","logrotate", "chef_handler", "compat_resource", "ohai", "windows"
 end
 default_source :chef_repo, "../"
+
+default_source :chef_server, "https://aut-chef-server/organizations/automate-org" do |t|
+    t.preferred_for "audit-wrapper", "audit", "remediation"
+end
 
 # run_list: chef-client will run these recipes in the order specified.
 run_list 'chef-client::default','audit-wrapper::default','remediation::default'
@@ -20,6 +24,8 @@ run_list 'chef-client::default','audit-wrapper::default','remediation::default'
 cookbook "chef-client", "= 11.0.4"
 cookbook "cron", "= 6.2.2"
 cookbook "logrotate", "= 2.2.2"
+cookbook "audit", "= 0.1.9"
+cookbook "remediation", ">= 0.0.0"
 
 # Set attributes
 default['chef_client']['interval'] = '120'
